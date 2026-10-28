@@ -1,88 +1,121 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+
 import { Product } from "@/app/types/product";
 
-import { create } from "zustand";
-
 export type CartItem = {
-    product: Product;
-    quantity: number;
+  product: Product;
+  quantity: number;
 };
 
 type CartState = {
-    items: CartItem[];
+  items: CartItem[];
 
-    addItem: (product: Product, quantity?: number) => void;
-    increaseQuantity: (productId: string) => void;
-    decreaseQuantity: (productId: string) => void;
-    removeItem: (productId: string) => void;
-    clearCart: () => void;
+  addItem: (product: Product, quantity?: number) => void;
+  increaseQuantity: (productId: string) => void;
+  decreaseQuantity: (productId: string) => void;
+  removeItem: (productId: string) => void;
+  clearCart: () => void;
 
-    getItemCount: () => number;
-    getSubTotal: () => number;
+  getItemCount: () => number;
+  getSubTotal: () => number;
 };
 
-export const useCartStore = create<CartState>((set, get) => ({
-    items: [],
+export const useCartStore = create<CartState>()(
+  persist(
+    (set, get) => ({
+      items: [],
 
-    addItem: (product, quantity = 1) => {
-        if (quantity <= 0) return;
+      addItem: (product, quantity = 1) => {
+        if (!Number.isFinite(quantity) || quantity <= 0) {
+          return;
+        }
 
         set((state) => {
-            const existingItem = state.items.find(
-                (item) => item.product.id === product.id
-            );
+          const existingItem = state.items.find(
+            (item) => item.product.id === product.id
+          );
 
-            if (existingItem) {
-                return {
-                    items: state.items.map((item) => 
-                        item.product.id === product.id
-                            ? {
-                                ...item,
-                                quantity: existingItem.quantity + quantity,
-                            }
-                        : item
-                    ),
-                };
-            }
-            
+          if (existingItem) {
             return {
-                items: [...state.items, { product, quantity}],
+              items: state.items.map((item) =>
+                item.product.id === product.id
+                  ? {
+                      ...item,
+                      quantity: item.quantity + quantity,
+                    }
+                  : item
+              ),
             };
+          }
+
+          return {
+            items: [...state.items, { product, quantity }],
+          };
         });
-    },
+      },
 
-    increaseQuantity: (productId) => {
+      increaseQuantity: (productId) => {
         set((state) => ({
-            items: state.items.map((item) => 
-                item.product.id === productId
-                    ? { ...item, quantity: item.quantity + 1 }
-                    : item
-            ),
+          items: state.items.map((item) =>
+            item.product.id === productId
+              ? {
+                  ...item,
+                  quantity: item.quantity + 1,
+                }
+              : item
+          ),
         }));
-    },
+      },
 
-     decreaseQuantity: (productId) => {
+      decreaseQuantity: (productId) => {
         set((state) => ({
-            items: state.items.map((item) => 
-                item.product.id === productId
-                    ? { ...item, quantity: item.quantity - 1 }
-                    : item
-                )
-                .filter((item) => item.quantity > 0),
+          items: state.items
+            .map((item) =>
+              item.product.id === productId
+                ? {
+                    ...item,
+                    quantity: item.quantity - 1,
+                  }
+                : item
+            )
+            .filter((item) => item.quantity > 0),
         }));
-    },
+      },
 
-    removeItem: (productId) => {
+      removeItem: (productId) => {
         set((state) => ({
-            items: state.items.filter(
-                (item) => item.product.id !== productId
-            ),
+          items: state.items.filter(
+            (item) => item.product.id !== productId
+          ),
         }));
-    },
+      },
 
-    clearCart: () => set({ items: [] }),
+      clearCart: () => set({ items: [] }),
 
-    getItemCount: () => 
-        get().items.reduce((total, item) => total + item.quantity, 0),
-    
-    getSubTotal: () => get().items.reduce((total, item) => total + item.product.price * item.quantity, 0),
-}));
+      getItemCount: () =>
+        get().items.reduce(
+          (total, item) => total + item.quantity,
+          0
+        ),
+
+      getSubTotal: () =>
+        get().items.reduce(
+          (total, item) =>
+            total + item.product.price * item.quantity,
+          0
+        ),
+    }),
+
+    {
+      name: "prime-cuts-shopping-cart",
+      storage: createJSONStorage(() => AsyncStorage),
+
+      // Persist only the cart items, not the store's functions.
+      partialize: (state) => ({
+        items: state.items,
+      }),
+    }
+  )
+);
