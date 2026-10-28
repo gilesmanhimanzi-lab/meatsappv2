@@ -8,7 +8,6 @@ import {
 
 import Header from "../../components/Header";
 
-import CategoryCard from '@/components/CategoryCard';
 import SectionTitle from '@/components/SectionTitle';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -75,38 +74,24 @@ export default function HomeScreen() {
           />
 
           <Text className="text-sm leading-6 text-stone-600">
-            At Prime Cuts, we believe every great meal starts
+            At One Family Meats, we believe every great meal starts
             with quality ingredients. Explore our selection of
-            beef, chicken, pork, sausages, and braai favourites
+            bla bla bla 
             for your next family meal.
           </Text>
         </View>
 
         <View className="pt-8">
-          <View className="px-5">
-            <SectionTitle
-              title="Type yese"
-              subtitle="Find what your are looking for"
-            />
-          </View>
-
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 20 }}
           >
-            {categories.map((category) => (
-              <CategoryCard
-                key={category}
-                name={category}
-                onPress={() =>
-                    router.push({
-                      pathname: "/catalogue",
-                      params: { category },
-                    })
-                }
-              />
-            ))}
+           <View className="flex items-center justify-center">
+            <Text className="text-4xl font-bold">
+              Hukama Igasva
+            </Text>
+           </View>
           </ScrollView>
         </View>
       </ScrollView>

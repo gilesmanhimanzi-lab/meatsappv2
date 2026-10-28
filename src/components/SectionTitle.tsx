@@ -14,7 +14,7 @@ export default function SectionTitle({ title, subtitle}: Props) {
 
             {subtitle ? (
                 <View className="mt-1 text-sm text-stone-500">
-                    {subtitle}
+                    <Text>{subtitle}</Text>
                 </View>
             ) : null}
         </View>

@@ -34,7 +34,9 @@ export default function Header({ showBack = false }: HeaderProps) {
             </View>
 
             <TouchableOpacity
-                onPress={() => {}}
+                onPress={() => {
+                    router.push("/cart");
+                }}
                 className="h-11 w-11 items-center justify-center rounded-full bg-stone-10"
             >
                 <Ionicons name="cart-outline" size={23} color="#292524" />

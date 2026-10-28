@@ -1,8 +1,8 @@
 import {
-    Image,
-    Text,
-    TouchableOpacity,
-    View,
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import { Product } from "@/app/types/product";
