@@ -1,15 +1,15 @@
 import { useMemo, useState } from "react";
 
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Linking,
-    Platform,
-    ScrollView,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
+  Alert,
+  KeyboardAvoidingView,
+  Linking,
+  Platform,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -18,7 +18,7 @@ import { router } from "expo-router";
 import Header from "../components/Header";
 import { useCartStore } from "../store/cart";
 
-const BUTCHERY_WHATSAPP = "263771234567";
+const BUTCHERY_WHATSAPP = "263711396359";
 
 type FulfilmentMethod = "delivery" | "collection";
 
