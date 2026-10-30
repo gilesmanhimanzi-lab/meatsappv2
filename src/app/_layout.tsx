@@ -7,8 +7,10 @@ export default function RootLayout() {
       <Stack.Screen name="index" options={{title: "meatsapp" }}/>
       <Stack.Screen name="catalogue" options={{title: "Catalogue"}} />
       <Stack.Screen name="(tabs)" options={{headerShown: false}} />
-      <Stack.Screen name="cart" options={ {title: "Cart" }} />
-      <Stack.Screen name="product/[id]" />
+      <Stack.Screen name="cart" options={ {title: "Cart", headerShown:false }} />
+      <Stack.Screen name="product/[id]" options={{headerShown: false}}/>
+      <Stack.Screen name="checkout" options={{headerShown: false}}/>
     </Stack>
   );
 }
+ 

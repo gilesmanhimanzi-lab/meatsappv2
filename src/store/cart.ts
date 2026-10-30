@@ -19,7 +19,7 @@ type CartState = {
   clearCart: () => void;
 
   getItemCount: () => number;
-  getSubTotal: () => number;
+  getSubtotal: () => number;
 };
 
 export const useCartStore = create<CartState>()(
@@ -100,7 +100,7 @@ export const useCartStore = create<CartState>()(
           0
         ),
 
-      getSubTotal: () =>
+      getSubtotal: () =>
         get().items.reduce(
           (total, item) =>
             total + item.product.price * item.quantity,
