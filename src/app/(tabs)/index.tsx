@@ -8,6 +8,7 @@ import {
 
 import Header from "../../components/Header";
 
+import ProductCard from '@/components/ProductCard';
 import SectionTitle from '@/components/SectionTitle';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
@@ -39,7 +40,7 @@ export default function HomeScreen() {
           <View className="absolute -right-8 -top-8 h-40 w-40 rounded-full bg-red-800" />
 
           <Text className="text-xs font-bold uppercase tracking-widest text-red-200">
-            Welcome to meatsapp
+            Meatsapp
           </Text>
 
           <Text className="mt-3 text-3xl font-extrabold leading-10 text-white">
@@ -47,7 +48,7 @@ export default function HomeScreen() {
           </Text>
 
           <Text className="mt-3 max-w-64 text-sm leading-6 text-red-100">
-            Everyday meals , gatherings, cooking as a group
+            Everyday meals, gatherings, cooking for the group
           </Text>
 
           <TouchableOpacity
@@ -69,15 +70,14 @@ export default function HomeScreen() {
 
         <View className="px-5 pt-8">
           <SectionTitle
-            title="good food/meat, good life"
+            title="good food, good life"
             subtitle="From your trusted neighbourhood butchery"
           />
 
           <Text className="text-sm leading-6 text-stone-600">
             At One Family Meats, we believe every great meal starts
             with quality ingredients. Explore our selection of
-            bla bla bla 
-            for your next family meal.
+            prime cuts for your next family meal.
           </Text>
         </View>
 
@@ -87,11 +87,14 @@ export default function HomeScreen() {
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ paddingHorizontal: 20 }}
           >
-           <View className="flex items-center justify-center">
-            <Text className="text-4xl font-bold">
-              Hukama Igasva
-            </Text>
-           </View>
+            <View>
+              {featuredProducts.map((product) => (
+                <ProductCard
+                  product={product}
+                />
+              ))}
+            </View>
+            
           </ScrollView>
         </View>
       </ScrollView>

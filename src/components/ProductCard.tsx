@@ -65,6 +65,7 @@ export default function ProductCard({
           </View>
 
           <TouchableOpacity
+            accessibilityLabel={`But ${product.name}`}
             onPress={(event) => {
               event.stopPropagation();
               onAdd?.();

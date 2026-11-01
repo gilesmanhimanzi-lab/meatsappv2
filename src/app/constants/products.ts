@@ -17,7 +17,7 @@ export const products: Product[] = [
     unit: "kg",
     image: "https://images.unsplash.com/photo-1682991136736-a2b44623eeba?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
     description: "Portions for everyday meals and everyone",
-    featured: true,
+    featured: false,
    },
    { id: "3",
     name: "Goat meat",
@@ -26,6 +26,6 @@ export const products: Product[] = [
     unit: "kg",
     image: "https://plus.unsplash.com/premium_photo-1726138640100-37e644d59628?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D",
     description: "For traditional family meals",
-    featured: true,
+    featured: false,
    },
 ]

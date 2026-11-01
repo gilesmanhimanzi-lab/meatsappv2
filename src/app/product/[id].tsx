@@ -1,12 +1,13 @@
 import { useState } from "react";
 
 import {
-    Alert,
-    Image,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View,
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
@@ -21,7 +22,7 @@ export default function ProductDetailsScreen() {
 
   const product = products.find((item) => item.id === id);
 
-  const [quantity, setQuantity] = useState(1);
+  const [amount, setAmount] = useState("10");
 
   const addItem = useCartStore((state) => state.addItem);
 
@@ -54,14 +55,30 @@ export default function ProductDetailsScreen() {
     );
   }
 
-  const totalPrice = product.price * quantity;
+  const NumericAmount = Number(amount);
+
+  const validAmount = 
+    amount.trim() !== "" &&
+    Number.isFinite(NumericAmount) &&
+    NumericAmount > 0; 
+
+  const quantity = validAmount
+    ? NumericAmount / product.price
+    : 0;
 
   const handleAddToCart = () => {
-    addItem(product, quantity);
+    if (!validAmount) {
+      Alert.alert(
+        "Invalid amount",
+        "Enter a valid amount",
+      );
+      return;
+    }
+    addItem(product, NumericAmount);
 
     Alert.alert(
       "Added to cart",
-      `${quantity} ${product.unit === "kg" ? "kg" : product.unit === "pack" ? "pack(s)" : "item(s)"} of ${product.name} added to your cart.`,
+      `$${NumericAmount.toFixed(2)} worth of (${quantity.toFixed(3)} kg) added to your cart.`,
       [
         {
           text: "Continue shopping",
@@ -128,49 +145,60 @@ export default function ProductDetailsScreen() {
           {/* Quantity selector */}
           <View className="mt-7 rounded-2xl border border-stone-200 bg-white p-4">
             <Text className="text-base font-bold text-stone-900">
-              Select quantity
+              For how much?
             </Text>
 
-            <View className="mt-4 flex-row items-center justify-between">
-              <View>
+            <View className="mt-4 flex-row items-center justify-between rounded-xl border border-stone-200 px-4">
+              
                 <Text className="text-sm text-stone-500">
                   Quantity
                 </Text>
 
-                <Text className="mt-1 text-xl font-extrabold text-stone-900">
-                  {quantity}{" "}
-                  {product.unit === "kg" ? "kg" : product.unit}
-                </Text>
-              </View>
-
-              <View className="flex-row items-center">
-                <TouchableOpacity
-                  onPress={() =>
-                    setQuantity((current) => Math.max(1, current - 1))
-                  }
-                  disabled={quantity <= 1}
-                  className="h-11 w-11 items-center justify-center rounded-xl border border-stone-200"
-                >
-                  <Ionicons
-                    name="remove"
-                    size={22}
-                    color={quantity <= 1 ? "#D6D3D1" : "#292524"}
-                  />
-                </TouchableOpacity>
-
-                <Text className="mx-5 min-w-5 text-center text-lg font-bold text-stone-900">
-                  {quantity}
+                <Text className="text-xl font-extrabold text-stone-900">
+                  $
                 </Text>
 
-                <TouchableOpacity
-                  onPress={() =>
-                    setQuantity((current) => current + 1)
+                <TextInput
+                  value={amount}
+                  onChangeText={(value) => 
+                    setAmount(value.replace(/[^0-9.]/g, ""))
                   }
-                  className="h-11 w-11 items-center justify-center rounded-xl bg-red-800"
+                  keyboardType="decimal-pad"
+                  placeholder="Enter amount"
+                  className="flex-1 px-3 py-4 text-xl font-bold text-stone-900"
+                />
+            </View>
+
+            <View className="mt-4 flex-row justify-between">
+              {[2, 5, 10, 20 , 50].map((value) => (
+                <TouchableOpacity
+                  key={value}
+                  onPress={() => setAmount(value.toString())}
+                  className={`rounde-lg border px-4 py-2 ${
+                    amount === value.toString()
+                      ? "border-red-800 bg-red-50"
+                      : "border-stone-200"
+                  }`}
                 >
-                  <Ionicons name="add" size={22} color="#FFFFFF" />
+                  <Text className="font-bold text-stone-700">
+                    ${value}
+                  </Text>
                 </TouchableOpacity>
-              </View>
+              ))}
+            </View>
+
+            <View className="mt-5 rounded-xl bg-stone-50 p-4">
+              <Text className="text-sm text-stone-500">
+                You'll receive 
+              </Text>
+
+              <Text className="mt-1 text-3xl font-extrabold text-red-800">
+                {quantity.toFixed(3)} kg
+              </Text>
+
+              <Text className="mt-2 text-sm text-amber-500">
+                (${product.price.toFixed(2)} per kg)
+              </Text>
             </View>
           </View>
 
@@ -182,13 +210,15 @@ export default function ProductDetailsScreen() {
               </Text>
 
               <Text className="mt-1 text-2xl font-extrabold text-stone-900">
-                ${totalPrice.toFixed(2)}
+                ${validAmount ? NumericAmount.toFixed(2) : "0.00"}
               </Text>
             </View>
 
             <TouchableOpacity
               onPress={handleAddToCart}
-              className="flex-row items-center rounded-xl bg-red-800 px-5 py-4"
+              className={`flex-row items-center rounded-xl bg-red-800 px-5 py-4 ${
+                validAmount ? "bg-red-800" : "bg-stone-300"
+              }`}
             >
               <Ionicons
                 name="cart-outline"

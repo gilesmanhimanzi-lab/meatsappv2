@@ -7,14 +7,15 @@ import { Product } from "@/app/types/product";
 export type CartItem = {
   product: Product;
   quantity: number;
+  price: number;
 };
 
 type CartState = {
   items: CartItem[];
 
-  addItem: (product: Product, quantity?: number) => void;
-  increaseQuantity: (productId: string) => void;
-  decreaseQuantity: (productId: string) => void;
+  addItem: (product: Product, price: number) => void;
+  increaseQuantity: (productId: string, amount: number) => void;
+  decreaseQuantity: (productId: string, amount: number) => void;
   removeItem: (productId: string) => void;
   clearCart: () => void;
 
@@ -23,14 +24,15 @@ type CartState = {
 };
 
 export const useCartStore = create<CartState>()(
-  persist(
-    (set, get) => ({
+  persist((set, get) => ({
       items: [],
 
-      addItem: (product, quantity = 1) => {
-        if (!Number.isFinite(quantity) || quantity <= 0) {
+      addItem: (product, amount) => {
+        if (!Number.isFinite(amount) || amount <= 0) {
           return;
         }
+
+        const quantity = amount / product.price;
 
         set((state) => {
           const existingItem = state.items.find(
@@ -44,6 +46,7 @@ export const useCartStore = create<CartState>()(
                   ? {
                       ...item,
                       quantity: item.quantity + quantity,
+                      price: item.price + 1,
                     }
                   : item
               ),
@@ -51,38 +54,51 @@ export const useCartStore = create<CartState>()(
           }
 
           return {
-            items: [...state.items, { product, quantity }],
+            items: [
+              ...state.items, 
+              { 
+                product,  
+                quantity,
+                price: amount 
+              }
+            ],
           };
         });
       },
 
-      increaseQuantity: (productId) => {
+      increaseQuantity: (productId, amount) => {
+        if (!Number.isFinite(amount) || amount <= 0) return;
         set((state) => ({
           items: state.items.map((item) =>
             item.product.id === productId
               ? {
                   ...item,
-                  quantity: item.quantity + 1,
+                  price: item.price + amount,
+                  quantity: item.quantity + amount / item.product.price,
                 }
               : item
           ),
         }));
       },
 
-      decreaseQuantity: (productId) => {
+      decreaseQuantity: (productId, amount) => {
+        if (!Number.isFinite(amount) || amount <= 0) return;
         set((state) => ({
           items: state.items
-            .map((item) =>
-              item.product.id === productId
-                ? {
-                    ...item,
-                    quantity: item.quantity - 1,
-                  }
-                : item
-            )
-            .filter((item) => item.quantity > 0),
+            .map((item) => {
+              if (item.product.id !== productId) return item;
+
+              const newAmount = Math.max(0, item.price - amount);
+
+              return {
+                ...item,
+                price: newAmount,
+                quantity: newAmount / item.product.price,
+              };    
+            })
+            .filter((item) => item.price > 0),
         }));
-      },
+    },
 
       removeItem: (productId) => {
         set((state) => ({
@@ -102,14 +118,13 @@ export const useCartStore = create<CartState>()(
 
       getSubtotal: () =>
         get().items.reduce(
-          (total, item) =>
-            total + item.product.price * item.quantity,
+          (total, item) => total + item.price,
           0
         ),
     }),
 
     {
-      name: "prime-cuts-shopping-cart",
+      name: "meatsapp-shopping-cart",
       storage: createJSONStorage(() => AsyncStorage),
 
       // Persist only the cart items, not the store's functions.

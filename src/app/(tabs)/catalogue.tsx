@@ -1,4 +1,4 @@
-import { Alert, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 
 import Header from "@/components/Header";
 import ProductCard from "@/components/ProductCard";
@@ -25,14 +25,14 @@ export default function CataloguePage() {
                     Get your fill
                 </Text>
                 <Text className="mt-2 text-sm text-stone-500">
-                    get your fill
+                    What are you getting today
                 </Text>
             </View>
 
             <ScrollView 
                 showsVerticalScrollIndicator={false}
             >
-                <View className="flex-row flex-wrap justify-between">
+                <View className="flex-row flex-wrap justify-between px-3">
                     {products.map((product) => (
                         <View key={product.id} className="w-[48%]">
                             <ProductCard
@@ -42,11 +42,7 @@ export default function CataloguePage() {
                                 }
                                 }
                                 onAdd={() => {
-                                    addItem(product, 1);
-
-                                    Alert.alert(
-                                    "Item has been added",
-                                    `${product.name} has been added to your cart`);
+                                    router.push(`/product/${product.id}`)
                                 }}
                             />
                         </View>
